@@ -1,7 +1,8 @@
-FROM eclipse-temurin:11-jre as runtime 
+FROM maven:3.9-eclipse-temurin-17 AS build
+WORKDIR /app
+COPY . .
+RUN mvn -B clean package -DskipTests
 
-WORKDIR /app 
-
-COPY target/smallest-spring-app-1.0.0.jar app.jar 
-
-ENTRYPOINT ["java","-jar","app.jar"] 
+FROM tomcat:9-jdk17
+COPY --from=build /app/target/*.war /usr/local/tomcat/webapps/ROOT.war
+EXPOSE 8080
