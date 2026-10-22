@@ -1,19 +1,7 @@
+FROM eclipse-temurin:11-jre as runtime 
 
-# Stage 1: Build the application
-FROM maven:3.9-eclipse-temurin-17 AS build
+WORKDIR /app 
 
-WORKDIR /app
+COPY target/smallest-spring-app-1.0.0.jar app.jar 
 
-COPY pom.xml .
-COPY src ./src
-
-RUN mvn clean package -DskipTests
-
-# Stage 2: Run the application on Tomcat
-FROM tomcat:10.1-jdk17-temurin
-
-COPY --from=build /app/target/*.war /usr/local/tomcat/webapps/ROOT.war
-
-EXPOSE 8080
-
-CMD ["catalina.sh", "run"]
+ENTRYPOINT ["java","-jar","app.jar"] 
